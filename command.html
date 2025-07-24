@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+  <script>
+    Office.initialize = function () {
+      Office.context.mailbox.item.addHandlerAsync(
+        Office.EventType.AttachmentsChanged,
+        function () {
+          Office.context.mailbox.item.getAttachmentsAsync((res) => {
+            if (res.value.length > 0) {
+              Office.context.mailbox.item.notificationMessages.replaceAsync("ekleme", {
+                type: "informationalMessage",
+                message: "ekleme",
+                icon: "icon16",
+                persistent: false
+              });
+            }
+          });
+        }
+      );
+    };
+  </script>
+</head>
+<body>
+  <p>Add-in aktif</p>
+</body>
+</html>
