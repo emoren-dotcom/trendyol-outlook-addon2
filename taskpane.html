@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Dosya Ekleme Kontrol</title>
+    <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h3>📎 Dosya Ekleme Kontrolü</h3>
+        <div id="attachmentStatus">Kontrol ediliyor...</div>
+        <button id="checkButton" onclick="checkAttachments()">Dosyaları Kontrol Et</button>
+        <div id="warningMessage" class="warning hidden">
+            ⚠️ UYARI: Bu maile dosya eklenmiş! Gönderim öncesi kontrol edin.
+        </div>
+    </div>
+
+    <script>
+        Office.initialize = function (reason) {
+            checkAttachments();
+            // Her 2 saniyede bir kontrol et
+            setInterval(checkAttachments, 2000);
+        };
+
+        function checkAttachments() {
+            Office.context.mailbox.item.attachments.getAsync(function(result) {
+                const statusDiv = document.getElementById('attachmentStatus');
+                const warningDiv = document.getElementById('warningMessage');
+                
+                if (result.status === Office.AsyncResultStatus.Succeeded) {
+                    if (result.value && result.value.length > 0) {
+                        statusDiv.innerHTML = `🔴 ${result.value.length} dosya eklenmiş!`;
+                        warningDiv.classList.remove('hidden');
+                        
+                        // Ses uyarısı (opsiyonel)
+                        if (window.Audio) {
+                            const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmQdBzuGze/HcyYFS3bE7+eXPwoUWrfp7K5VFwpBm9z2x2kzBD6JzetTJSJ3Jz');
+                            audio.play().catch(e => console.log('Ses çalınamadı'));
+                        }
+                    } else {
+                        statusDiv.innerHTML = '🟢 Henüz dosya eklenmemiş';
+                        warningDiv.classList.add('hidden');
+                    }
+                } else {
+                    statusDiv.innerHTML = '❌ Kontrol edilemiyor';
+                }
+            });
+        }
+    </script>
+</body>
+</html>
+            
