@@ -12,13 +12,37 @@
 
     <script>
         Office.onReady(() => {
-          console.log("Office.js hazır!");
+            console.log("Office.js hazır!");
         });
-      </script>
+    </script>
+
+    <script>
+        let lastAttachmentCount = 0;
+
+        Office.onReady((info) => {
+            if (info.host === Office.HostType.Outlook) {
+                // Polling yöntemiyle attachment var mı kontrol ederiz
+                setInterval(() => {
+                    const item = Office.context.mailbox.item;
+
+                    if (item && item.attachments) {
+                        const currentCount = item.attachments.length;
+
+                        if (currentCount > lastAttachmentCount) {
+                            alert("⚠️ Dosya eklendi!");
+                            lastAttachmentCount = currentCount;
+                        } else if (currentCount < lastAttachmentCount) {
+                            lastAttachmentCount = currentCount;
+                        }
+                    }
+                }, 1500); // her 1.5 saniyede bir kontrol
+            }
+        });
+    </script>
 </head>
 
 <body>
-  
+
 </body>
 
 </html>
