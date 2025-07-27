@@ -6,10 +6,34 @@
 /* global document, Office */
 
 Office.onReady((info) => {
+  console.log("OUTLOOOOOOOOOOOOK INFO", info);
   if (info.host === Office.HostType.Outlook) {
     document.getElementById("sideload-msg").style.display = "none";
     document.getElementById("app-body").style.display = "flex";
     document.getElementById("run").onclick = run;
+  }
+});
+
+
+let lastAttachmentCount = 0;
+
+Office.onReady((info) => {
+  if (info.host === Office.HostType.Outlook) {
+    // Polling yöntemiyle attachment var mı kontrol ederiz
+    setInterval(() => {
+      const item = Office.context.mailbox.item;
+
+      if (item && item.attachments) {
+        const currentCount = item.attachments.length;
+
+        if (currentCount > lastAttachmentCount) {
+          alert("⚠️ Dosya eklendi!");
+          lastAttachmentCount = currentCount;
+        } else if (currentCount < lastAttachmentCount) {
+          lastAttachmentCount = currentCount;
+        }
+      }
+    }, 1000); // her 1 saniyede bir kontrol
   }
 });
 
