@@ -7,7 +7,31 @@
 
 Office.onReady(() => {
   // If needed, Office.js is ready to be called.
+  console.warn("EEEEEEEEEEmmmmmmmmmRRRRRRRRReeeeeeeee")
 });
+
+let lastAttachmentCount = 0;
+
+Office.onReady((info) => {
+  if (info.host === Office.HostType.Outlook) {
+    // Polling yöntemiyle attachment var mı kontrol ederiz
+    setInterval(() => {
+      const item = Office.context.mailbox.item;
+
+      if (item && item.attachments) {
+        const currentCount = item.attachments.length;
+
+        if (currentCount > lastAttachmentCount) {
+          alert("⚠️ Dosya eklendi!");
+          lastAttachmentCount = currentCount;
+        } else if (currentCount < lastAttachmentCount) {
+          lastAttachmentCount = currentCount;
+        }
+      }
+    }, 1000); // her 1 saniyede bir kontrol
+  }
+});
+
 
 /**
  * Shows a notification when the add-in command is executed.
