@@ -1,79 +1,63 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <OfficeApp xmlns="http://schemas.microsoft.com/office/appforoffice/1.1"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-           xsi:type="MessageReadCommandSurface">
-  <Id>fa6e0111-2233-4455-a9fe-123456789abc</Id>
+           xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0"
+           xmlns:mailappor="http://schemas.microsoft.com/office/mailappversionoverrides/1.0"
+           xsi:type="MailApp">
+
+  <Id>12345678-abcd-1234-abcd-1234567890ab</Id>
   <Version>1.0.0.0</Version>
-  <ProviderName>Senin Adın</ProviderName>
+  <ProviderName>Test Addin</ProviderName>
   <DefaultLocale>en-US</DefaultLocale>
-  <DisplayName DefaultValue="Basit Outlook Add-in" />
-  <Description DefaultValue="Bu uzantı bir uyarı popup’ı gösterir" />
-  <IconUrl DefaultValue="https://example.com/icon-32.png"/>
-  <SupportUrl DefaultValue="https://example.com/support" />
+  <DisplayName DefaultValue="Basit Uyarı Eklentisi"/>
+  <Description DefaultValue="Dosya eklendiğinde uyarı gösteren basit bir add-in."/>
+  <IconUrl DefaultValue="https://emoren-dotcom.github.io/trendyol-outlook-addon2/icon-32.png"/>
+  <SupportUrl DefaultValue="https://emoren-dotcom.github.io/trendyol-outlook-addon2/support.html"/>
 
   <Hosts>
-    <Host Name="Mailbox" />
+    <Host Name="Mailbox"/>
   </Hosts>
 
   <Requirements>
     <Sets DefaultMinVersion="1.1">
-      <Set Name="Mailbox" />
+      <Set Name="Mailbox"/>
     </Sets>
   </Requirements>
 
   <Resources>
-    <Urls>
-      <Url>https://emoren-dotcom.github.io/trendyol-outlook-addon2/command.html</Url>
-    </Urls>
+    <bt:Urls>
+      <bt:Url id="commandUrl" DefaultValue="https://emoren-dotcom.github.io/trendyol-outlook-addon2/command.html"/>
+    </bt:Urls>
   </Resources>
 
-  <ExtensionPoint xsi:type="MessageReadCommandSurface">
-    <OfficeTab id="Message">
-      <Group id="msgReadGroup">
-        <Label resid="groupLabel"/>
-        <Control xsi:type="Button" id="showPopupButton">
-          <Label resid="buttonLabel"/>
-          <Supertip>
-            <Title resid="buttonLabel"/>
-            <Description resid="buttonDescription"/>
-          </Supertip>
-          <Icon>
-            <bt:Image size="16" resid="icon16"/>
-            <bt:Image size="32" resid="icon32"/>
-            <bt:Image size="80" resid="icon80"/>
-          </Icon>
-          <Action xsi:type="ShowTaskpane">
-            <SourceLocation resid="taskpaneUrl"/>
-          </Action>
-        </Control>
-      </Group>
-    </OfficeTab>
-  </ExtensionPoint>
-
-  <VersionOverrides xmlns="http://schemas.microsoft.com/office/mailappversionoverrides/1.0" 
-                    xsi:type="VersionOverridesV1_0">
+  <VersionOverrides xmlns="http://schemas.microsoft.com/office/mailappversionoverrides/1.0" xsi:type="VersionOverridesV1_0">
+    <Requirements>
+      <bt:Sets DefaultMinVersion="1.1">
+        <bt:Set Name="Mailbox" />
+      </bt:Sets>
+    </Requirements>
     <Hosts>
       <Host xsi:type="Mailbox">
         <DesktopFormFactor>
-          <FunctionFile resid="taskpaneUrl" />
-          <ExtensionPoint xsi:type="MessageReadCommandSurface">
+          <FunctionFile resid="commandUrl" />
+          <ExtensionPoint xsi:type="MessageComposeCommandSurface">
             <OfficeTab id="Message">
-              <Group id="msgReadGroup">
+              <Group id="msgComposeGroup">
                 <Label resid="groupLabel"/>
-                <Control xsi:type="Button" id="showPopupButton">
+                <Control xsi:type="Button" id="showWarningBtn">
                   <Label resid="buttonLabel"/>
-                  <Supertip>
-                    <Title resid="buttonLabel"/>
-                    <Description resid="buttonDescription"/>
-                  </Supertip>
                   <Icon>
                     <bt:Image size="16" resid="icon16"/>
                     <bt:Image size="32" resid="icon32"/>
                     <bt:Image size="80" resid="icon80"/>
                   </Icon>
                   <Action xsi:type="ShowTaskpane">
-                    <SourceLocation resid="taskpaneUrl"/>
+                    <SourceLocation resid="commandUrl"/>
                   </Action>
+                  <Supertip>
+                    <Title resid="buttonLabel"/>
+                    <Description resid="buttonDescription"/>
+                  </Supertip>
                 </Control>
               </Group>
             </OfficeTab>
@@ -81,22 +65,21 @@
         </DesktopFormFactor>
       </Host>
     </Hosts>
-
     <Resources>
       <bt:Images>
-        <bt:Image id="icon16" DefaultValue="https://example.com/icon-16.png"/>
-        <bt:Image id="icon32" DefaultValue="https://example.com/icon-32.png"/>
-        <bt:Image id="icon80" DefaultValue="https://example.com/icon-80.png"/>
+        <bt:Image id="icon16" DefaultValue="https://emoren-dotcom.github.io/trendyol-outlook-addon2/icon-16.png"/>
+        <bt:Image id="icon32" DefaultValue="https://emoren-dotcom.github.io/trendyol-outlook-addon2/icon-32.png"/>
+        <bt:Image id="icon80" DefaultValue="https://emoren-dotcom.github.io/trendyol-outlook-addon2/icon-80.png"/>
       </bt:Images>
       <bt:Urls>
-        <bt:Url id="taskpaneUrl" DefaultValue="https://example.com/command.html"/>
+        <bt:Url id="commandUrl" DefaultValue="https://emoren-dotcom.github.io/trendyol-outlook-addon2/command.html"/>
       </bt:Urls>
       <bt:ShortStrings>
         <bt:String id="groupLabel" DefaultValue="Eklenti Grubu"/>
         <bt:String id="buttonLabel" DefaultValue="Uyarı Göster"/>
       </bt:ShortStrings>
       <bt:LongStrings>
-        <bt:String id="buttonDescription" DefaultValue="Popup mesajı gösterir"/>
+        <bt:String id="buttonDescription" DefaultValue="Ekleme yapıldığında uyarı gösterir"/>
       </bt:LongStrings>
     </Resources>
   </VersionOverrides>
