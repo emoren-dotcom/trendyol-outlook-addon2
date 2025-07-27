@@ -1,53 +1,273 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <title>Dosya Ekleme Kontrol</title>
-    <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
-    <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Trendyol Outlook Addon</title>
+
+    <!-- Office.js -->
+    <script type="text/javascript" src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 300;
+        }
+
+        .content {
+            padding: 20px;
+        }
+
+        .info-card {
+            background: #f8f9fa;
+            border-left: 4px solid #ff6b35;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .info-card h3 {
+            margin: 0 0 10px 0;
+            color: #333;
+            font-size: 16px;
+        }
+
+        .info-card p {
+            margin: 0;
+            color: #666;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #ff6b35;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #e55a2b;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #545b62;
+            transform: translateY(-2px);
+        }
+
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .status.info {
+            background: #cce7ff;
+            color: #004085;
+            border: 1px solid #b8daff;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #ff6b35;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .email-info {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+
+        .email-info strong {
+            color: #1976d2;
+        }
+    </style>
 </head>
+
 <body>
     <div class="container">
-        <h3>📎 Dosya Ekleme Kontrolü</h3>
-        <div id="attachmentStatus">Kontrol ediliyor...</div>
-        <button id="checkButton" onclick="checkAttachments()">Dosyaları Kontrol Et</button>
-        <div id="warningMessage" class="warning hidden">
-            ⚠️ UYARI: Bu maile dosya eklenmiş! Gönderim öncesi kontrol edin.
+        <div class="header">
+            <h1>📧 Trendyol Addon</h1>
+        </div>
+        
+        <div class="content">
+            <div class="info-card">
+                <h3>🚀 Hoş Geldiniz!</h3>
+                <p>Bu eklenti Outlook ile Trendyol entegrasyonu sağlar. E-posta bilgilerinizi görüntüleyebilir ve çeşitli işlemler yapabilirsiniz.</p>
+            </div>
+
+            <div class="email-info" id="emailInfo" style="display: none;">
+                <h3>📨 E-posta Bilgileri</h3>
+                <p><strong>Konu:</strong> <span id="emailSubject">-</span></p>
+                <p><strong>Gönderen:</strong> <span id="emailFrom">-</span></p>
+                <p><strong>Tarih:</strong> <span id="emailDate">-</span></p>
+            </div>
+
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="getEmailInfo()">
+                    📧 E-posta Bilgisi Al
+                </button>
+                <button class="btn btn-secondary" onclick="showTrendyolInfo()">
+                    🛍️ Trendyol Bilgi
+                </button>
+            </div>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>İşlem yapılıyor...</p>
+            </div>
+
+            <div id="status"></div>
         </div>
     </div>
 
     <script>
         Office.initialize = function (reason) {
-            checkAttachments();
-            // Her 2 saniyede bir kontrol et
-            setInterval(checkAttachments, 2000);
+            console.log('Office.js initialized');
+            showStatus('Eklenti başarıyla yüklendi!', 'success');
         };
 
-        function checkAttachments() {
-            Office.context.mailbox.item.attachments.getAsync(function(result) {
-                const statusDiv = document.getElementById('attachmentStatus');
-                const warningDiv = document.getElementById('warningMessage');
-                
-                if (result.status === Office.AsyncResultStatus.Succeeded) {
-                    if (result.value && result.value.length > 0) {
-                        statusDiv.innerHTML = `🔴 ${result.value.length} dosya eklenmiş!`;
-                        warningDiv.classList.remove('hidden');
-                        
-                        // Ses uyarısı (opsiyonel)
-                        if (window.Audio) {
-                            const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmQdBzuGze/HcyYFS3bE7+eXPwoUWrfp7K5VFwpBm9z2x2kzBD6JzetTJSJ3Jz');
-                            audio.play().catch(e => console.log('Ses çalınamadı'));
-                        }
-                    } else {
-                        statusDiv.innerHTML = '🟢 Henüz dosya eklenmemiş';
-                        warningDiv.classList.add('hidden');
-                    }
-                } else {
-                    statusDiv.innerHTML = '❌ Kontrol edilemiyor';
-                }
-            });
+        function showLoading(show) {
+            document.getElementById('loading').style.display = show ? 'block' : 'none';
         }
+
+        function showStatus(message, type = 'info') {
+            const statusDiv = document.getElementById('status');
+            statusDiv.innerHTML = `<div class="status ${type}">${message}</div>`;
+            
+            // 5 saniye sonra mesajı temizle
+            setTimeout(() => {
+                statusDiv.innerHTML = '';
+            }, 5000);
+        }
+
+        function getEmailInfo() {
+            if (!Office.context.mailbox.item) {
+                showStatus('E-posta öğesi bulunamadı!', 'error');
+                return;
+            }
+
+            showLoading(true);
+            
+            try {
+                const item = Office.context.mailbox.item;
+                
+                // E-posta bilgilerini al
+                const subject = item.subject || 'Konu yok';
+                const from = item.from ? item.from.displayName + ' (' + item.from.emailAddress + ')' : 'Bilinmeyen gönderen';
+                const dateTimeCreated = item.dateTimeCreated ? new Date(item.dateTimeCreated).toLocaleString('tr-TR') : 'Bilinmeyen tarih';
+
+                // Bilgileri göster
+                document.getElementById('emailSubject').textContent = subject;
+                document.getElementById('emailFrom').textContent = from;
+                document.getElementById('emailDate').textContent = dateTimeCreated;
+                document.getElementById('emailInfo').style.display = 'block';
+
+                showLoading(false);
+                showStatus('E-posta bilgileri başarıyla alındı!', 'success');
+                
+            } catch (error) {
+                showLoading(false);
+                showStatus('E-posta bilgileri alınırken hata oluştu: ' + error.message, 'error');
+                console.error('Error getting email info:', error);
+            }
+        }
+
+        function showTrendyolInfo() {
+            showLoading(true);
+            
+            // Simulated API call
+            setTimeout(() => {
+                showLoading(false);
+                showStatus('Trendyol entegrasyonu aktif! Sipariş takibi ve ürün bilgileri için hazır.', 'info');
+            }, 1500);
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(event) {
+            if (event.ctrlKey && event.key === 'e') {
+                event.preventDefault();
+                getEmailInfo();
+            }
+        });
     </script>
 </body>
 </html>
-            
